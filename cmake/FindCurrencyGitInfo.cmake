@@ -1,0 +1,38 @@
+############
+# Git info #
+############
+
+# Add GIT project name
+execute_process(
+  COMMAND git config --local remote.origin.url
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_PROJECT_NAME
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+# Add GIT branch
+execute_process(
+  COMMAND git rev-parse --abbrev-ref HEAD
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_BRANCH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+# Add Git hashcode LONG
+execute_process(
+  COMMAND git log -1 --format=%H
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_HASH_LONG
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+# Add Git hashcode SHORT
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# extra environment info
+site_name(CMAKE_HOSTNAME)
+set(GIT_SYSTEM "$ENV{USER}@${CMAKE_HOSTNAME}")
+execute_process(COMMAND "date"  OUTPUT_VARIABLE DATETIME OUTPUT_STRIP_TRAILING_WHITESPACE)
+

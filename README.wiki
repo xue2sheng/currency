@@ -1,0 +1,99 @@
+= Currency Conversion =
+
+Get currency conversion from fixer.io site inside a multithreaded app.
+
+<!--
+@startuml summary.png
+
+hide footbox
+
+database EuropeanCentralBank 
+boundary Fixer.io 
+actor InMemory 
+control Calculate 
+
+== Update External Info ==
+EuropeanCentralBank -> Fixer.io : once a day more or less
+Fixer.io -> InMemory : save value each X minutes 
+InMemory -> Calculate : calculate conversion at request time
+
+@enduml
+-->
+[[File:https://raw.githubusercontent.com/xue2sheng/currencyConversion/master/images/summary.png|Summary]]
+
+=== Sites to browse ===
+
+[http://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html Euro foreing exchange refernce rates]
+
+[http://stackoverflow.com/questions/2329571/c-libcurl-get-output-into-a-string Read from curl into a string]
+
+[http://wwww.fixer.io JSON API for foreign exchange rates and currency conversion]
+
+[https://curl.haxx.se/libcurl/c/multithread.html A multi-threaded example that uses pthreads to fetch several files at once]
+
+=== Access to internal VERSION information. ===
+
+Similar to the previous section, just use '''strings''' command for summary and detail version info:
+
+<pre>  strings ./Currency_test | grep Currency_VERSION: | sort -u 
+  strings ./Currency_test | grep Currency_VERSION_INFO: | sort -u </pre>
+Being that information embedded on the libraries themselves, it's possible to directly query to them:
+
+<pre>  strings ./libJsanWrapper.so | grep Currency_VERSION: | sort -u 
+  strings ./libJsanWrapper.so | grep Currency_VERSION_INFO: | sort -u 
+
+  strings ./libJsanWrapper_static.a | grep Currency_VERSION: | sort -u 
+  strings ./libJsanWrapper_static.a | grep Currency_VERSION_INFO: | sort -u </pre>
+On ''macOS'' as well:
+
+<pre>  strings ./libCurrency.dylib  | grep Currency_VERSION: | sort -u 
+  strings ./libCurrency.dylib  | grep Currency_VERSION_INFO: | sort -u </pre>
+=== Running unit test with CTEST ===
+
+In order to get output on case of faiure, don't forget to set '''CTEST_OUTPUT_ON_FAILURE=1''' before invoking those tests.
+
+=== Extra logging for unit tests ===
+
+Invoke directly the testing executable with the proper level flag:
+
+<pre>   test/Currency_test  --log_level=message</pre>
+=== Install libraries and tests ===
+
+Environment variable INSTALL_PREFIX can be defined to target your favourite installation folder.
+
+=== Building with 'Ninja' instead of 'Unix Makefiles' ===
+
+Chose 'Ninja' building genarator instead of default 'Unix Makefiles' when '''cmake''' is invoke if you like it best:
+
+<pre>  cmake .. -G 'Ninja'</pre>
+After that, just execute the usual 'make-like' targets:
+
+<pre>  ninja
+  ninja test
+  ninja docCurrency
+  [sudo] ninja install</pre>
+=== Build test cases ===
+
+Activate test flag when '''cmake''' command is invoked. For example:
+
+<pre>   cmake .. -G &quot;Ninja&quot; -DCurrency_TEST=1</pre>
+=== Package generation ===
+
+Just use the command '''cpack''' once the binaries and documentation to be packed have been generated. For example:
+
+<pre> ninja &amp;&amp; ninja docCurrency &amp;&amp; cpack</pre>
+Or if classic Unix Makefiles are used:
+
+<pre> make &amp;&amp; make docCurrency &amp;&amp; cpack</pre>
+By default, a '''tar.gz''' file will be created. See [https://cmake.org/Wiki/CMake:Packaging_With_CPack CPack] for further details on '''deb''' or '''rpm''' packages.
+
+=== PlantUml diagrams ===
+
+[http://plantuml.com PlantUML] is a component that allows to quickly write ''UML'' and non-UML diagrams. It's based on '''graphviz/dot''' utilities and implement a wrapper in ''java'':
+
+<pre>java -jar /opt/plantuml/plantuml.jar -o images/  README.md</pre>
+=== Convert GitHub Markdown into MediaWiki ===
+
+[http://pandoc.org Pandoc] library tools lets you convert a lot of different formats:
+
+<pre>pandoc --from=markdown_github --to=mediawiki --output=README.wiki README.md</pre>
